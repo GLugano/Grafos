@@ -42,7 +42,7 @@
 		</li>
 		<li class="nav-item">
 			<a class="nav-link disabled" id="dijkstraTab" data-toggle="tab" href="#dijkstra" role="tab" aria-controls="listaIncidencia"
-			 aria-selected="false">Matriz Incidência</a>
+			 aria-selected="false">Dijkstra</a>
 		</li>
 	</ul>
 	<div class="tab-content" id="myTabContent">
@@ -50,7 +50,14 @@
 		<div class="tab-pane fade" id="listaMatrizAdjacencia" role="tabpanel" aria-labelledby="lista-matriz-adjacencia"></div>
 		<div class="tab-pane fade" id="listaAdjacencia" role="tabpanel" aria-labelledby="lista-adjacencia-tab"></div>
 		<div class="tab-pane fade" id="listaMatrizIncidencia" role="tabpanel" aria-labelledby="lista-incidencia-tab"></div>
-		<div class="tab-pane fade" id="dijkstra" role="tabpanel" aria-labelledby="lista-incidencia-tab"></div>
+		<div class="tab-pane fade" id="dijkstra" role="tabpanel" aria-labelledby="lista-incidencia-tab">
+			<label for="inputDijkstra">Início</label>
+			<input type="text" id="inputDijkstra" class="form-control">	
+			<button id="btnDijkstra" class="btn btn-primary">Calcular</button>
+			<div id="listaDijkstra">
+				
+			</div>
+		</div>
 	</div>
 </body>
 

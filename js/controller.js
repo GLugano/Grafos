@@ -58,16 +58,19 @@ function gerarMatrizIncidencia() {
 
 function gerarMatrizAdjacencia() {
   matrizAdjacencia = [];
-
+  debugger;
   listaVertices.forEach(v1 => {
     listaVertices.forEach(v2 => {
       listaAresta.forEach(item => {
         let val = (item.getV1() == v1 && item.getV2() == v2) ? 1 : 0;
 
-        insereMatriz(matrizAdjacencia, (orientado && item.getOrientado() == 1) ? val : ((valorado) ? item.getValor() : val), v1, v2);
+        if (valorado)
+          val = (val == 1) ? item.getValor() : 0;
+
+        insereMatriz(matrizAdjacencia, val, v1, v2);
 
         if (item.getOrientado() != 1 && v1 != v2)
-          insereMatriz(matrizAdjacencia, (valorado) ? item.getValor() : val, v2, v1);
+          insereMatriz(matrizAdjacencia, val, v2, v1);
       });
     });
   });
@@ -159,10 +162,10 @@ function dijkstra(inicio) {
       arestaMenor = arestaMenorValor(arestas);
 
       let dist = ((valorado) ? arestaMenor.getValor() : 1) + distancia[indexAtual];
-
+      debugger
       if (distancia[index] > dist) {
         distancia[index] = dist;
-        caminho[index] = adjacente;
+        caminho[index] = (arestaMenor.getV1() == adjacente) ? arestaMenor.getV2() : arestaMenor.getV1();
       }
     });
   }
@@ -273,5 +276,18 @@ window.onload = function () {
     gerarHtmlMatrizIncidencia();
 
     document.getElementById("dijkstraTab").classList.remove("disabled");
+  });
+
+  document.getElementById('btnDijkstra').addEventListener('click', function () {
+    let val = document.getElementById('inputDijkstra').value,
+       n = Math.floor(Number(val));
+    
+    if(n !== Infinity && String(n) === val && n >= 0) {
+      dijkstra(n);
+      gerarHtmlDijkstra();
+    } else {
+      alert('Insira um valor válido');
+    }
+    
   });
 }

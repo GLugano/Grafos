@@ -155,27 +155,22 @@ function gerarHtmlMatrizIncidencia() {
   listaMatrizIncidencia.appendChild(tabela);
 }
 
-function gerarDijkstraList() {
+function gerarHtmlDijkstra() {
   let tabela = document.createElement('table'),
     cabecalho,
-    listaCabecalho = ['Vertice', 'Distãncia', 'Caminho'],
-    listaMatrizIncidencia = document.getElementById('dijkstra'),
+    listaCabecalho = ['Vertice', 'Distância', 'Caminho'],
+    listaMatrizIncidencia = document.getElementById('listaDijkstra'),
     bodyTabela = document.createElement('tbody');
 
   limpaDiv(listaMatrizIncidencia);
 
   cabecalho = gerarCabecalho(listaCabecalho);
 
-  dijkstraList.forEach((arrayIncidencia, index) => {
+  dijkstraList.forEach((item) => {
     let tr = document.createElement('tr'),
       td = null;
 
-    td = document.createElement('th');
-    td.innerHTML = index;
-    td.scope = 'row';
-    tr.appendChild(td);
-
-    arrayIncidencia.forEach(el => {
+    item.forEach(el => {
       let td = null;
 
       td = document.createElement('td');
@@ -186,7 +181,7 @@ function gerarDijkstraList() {
     bodyTabela.appendChild(tr);
   });
 
-  tabela.id = 'tableMatrizIncidencia';
+  tabela.id = 'tableDijkstra';
   tabela.classList = 'table table-striped';
   tabela.appendChild(cabecalho);
   tabela.appendChild(bodyTabela);
