@@ -1,361 +1,59 @@
 <html lang="pt-Br">
-	<head>
-		<meta charset="UTF-8" /> 
-		<link rel="stylesheet" href="css/bootstrap.min.css">
-		<script src="js/jquery.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
-		<script>
-			var orientado = false,
-					valorado = false,
-					listaAresta = [],
-					listaVertices = [],
-					listaAdjacencia = [],
-					matrizAdjacencia = [],
-					matrizIncidencia = [];
-					
 
-			function gerarHtmlListaAresta(){
-				let tabela = document.createElement('table'),
-					listaArestaDiv = document.getElementById('listaAresta'),
-					bodyTabela = document.createElement('tbody'),
-					listaCabecalho = ['Aresta A','Aresta B'],
-					cabecalho;
-				
-				if (valorado) listaCabecalho.push('Valor');
-				if (orientado) listaCabecalho.push('Orientado');
-				
-				cabecalho = gerarCabecalho(listaCabecalho);
+<head>
+	<meta charset="UTF-8" />
+	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="assets/css/style.css">
+	<script src="assets/js/jquery.min.js"></script>
+	<script src="assets/js/bootstrap.min.js"></script>
+	<script src="js/htmlGenerator.js"></script>
+	<script src="js/controller.js"></script>
+</head>
 
-				limpaDiv(listaArestaDiv);
-
-				listaAresta.forEach(item => {
-					let tr = document.createElement('tr'),
-						td = null;
-					debugger
-					td = document.createElement('td');
-					td.innerHTML = item.getV1();
-					tr.appendChild(td);
-
-					td = document.createElement('td');
-					td.innerHTML = item.getV2();
-					tr.appendChild(td);	
-					
-					if (valorado) {
-						td = document.createElement('td');
-						td.innerHTML = item.getValor();
-						tr.appendChild(td);	
-					}
-					
-					if (orientado) {
-						td = document.createElement('td');
-						td.innerHTML = item.getOrientadoString();
-						tr.appendChild(td);	
-					}
-
-					bodyTabela.appendChild(tr);	
-				});
-
-				tabela.id = 'tableListaAresta';	
-				tabela.classList = 'table table-striped';	
-				tabela.appendChild(cabecalho);
-				tabela.appendChild(bodyTabela);
-				listaArestaDiv.appendChild(tabela);	
-			}
-
-			function gerarHtmlMatrizAdjacencia(){
-				let tabela = document.createElement('table'),
-				    cabecalho = gerarCabecalho(listaVertices, true),
-					listaMatrizAdjacencia = document.getElementById('listaMatrizAdjacencia'),
-					bodyTabela = document.createElement('tbody');
-
-				limpaDiv(listaMatrizAdjacencia);
-				
-				matrizAdjacencia.forEach((arrayAdjacencia, index) => {
-					let tr = document.createElement('tr'),
-					    td = null;
-
-					td = document.createElement('th');
-					td.innerHTML = index;
-					td.scope = 'row';
-					tr.appendChild(td);	
-
-					arrayAdjacencia.forEach(el => {
-						let td = null;
-
-						td = document.createElement('td');
-						td.innerHTML = el;
-						tr.appendChild(td);		
-					});	
-
-					bodyTabela.appendChild(tr);
-				});
-				
-				tabela.id = 'tableMatrizAdjacencia';	
-				tabela.classList = 'table table-striped';
-				tabela.appendChild(cabecalho);
-				tabela.appendChild(bodyTabela);
-				listaMatrizAdjacencia.appendChild(tabela);	
-			}
-			
-			function gerarHtmlListaAdjacencia(){
-				let tabela = document.createElement('table'),
-						listaListaAdjacencia = document.getElementById('listaAdjacencia'),
-						bodyTabela = document.createElement('tbody');
-
-				limpaDiv(listaListaAdjacencia);
-				
-				listaAdjacencia.forEach((arrayAdjacencia, index) => {
-					let tr = document.createElement('tr'),
-							texto = '',
-					    td = null;
-
-					td = document.createElement('th');
-					td.innerHTML = index;
-					td.scope = 'row';
-					tr.appendChild(td);	
-
-					arrayAdjacencia.forEach(el => texto += (texto.length > 0 ? ', ' : '') + el);	
-					
-					td = document.createElement('th');
-					td.innerHTML = texto;
-					tr.appendChild(td);	
-
-					bodyTabela.appendChild(tr);
-				});
-				
-				tabela.id = 'tableListaAdjacencia';	
-				tabela.classList = 'table table-striped';
-				tabela.appendChild(bodyTabela);
-				listaListaAdjacencia.appendChild(tabela);	
-			}
-
-			function gerarListaAresta(){
-				debugger
-				let rawStringList = document.getElementById('inputDados').value,
-						listaItens = rawStringList.split('/');
-				
-				listaAresta = [];
-				listaItens.forEach(el => {
-					let splitedData = el.split(',');
-					listaAresta.push(new listaArestaItem(parseInt(splitedData[0]), parseInt(splitedData[1]), parseInt(splitedData[2]), parseInt(splitedData[3])));	
-				});	
-			}
-
-			function gerarListaVertices(){
-				listaVertices = [];
-
-				listaAresta.forEach(el => {
-					if (listaVertices.indexOf(el.getV1()) < 0) listaVertices.push(el.getV1());  
-					if (listaVertices.indexOf(el.getV2()) < 0) listaVertices.push(el.getV2());  
-				});	
-
-				listaVertices.sort();
-			}
-
-			function gerarMatrizIncidencia(){
-				var incidencia = [];
-				matrizIncidencia = [];
-
-				listaAresta.forEach(el => {
-					incidencia = [];
-					listaVertices.forEach(vertice => {
-						incidencia[vertice] = 0;
-
-						if (orientado && el.getV1() == vertice) {
-							incidencia[vertice] = (orientado) ? 1 : ((valorado) ? item.getValor() : 1);
-						} else if (orientado && el.getV2() == vertice) {
-							incidencia[vertice] = (orientado) ? 1 : ((valorado) ? item.getValor() : 1) * -1;
-						} 
-						
-						if (!orientado && (el.getV1() == vertice || el.getV2() == vertice)) {
-							incidencia[vertice] = (orientado) ? 1 : ((valorado) ? item.getValor() : 1);
-						}
-					});
-					matrizIncidencia.push(incidencia);
-				});	
-			}
-			
-			function gerarMatrizAdjacencia(){
-				matrizAdjacencia = [];
-				
-				listaVertices.forEach(v1 => {
-					listaVertices.forEach(v2 => {
-						listaAresta.forEach(item => {
-							let val = (item.getV1() == v1 && item.getV2() == v2) ? 1 : 0; 
-							insereMatriz(matrizAdjacencia, (orientado) ? 1 : ((valorado) ? item.getValor() : 1), v1, v2);
-
-							if (!orientado && v1 != v2) 
-								insereMatriz(matrizAdjacencia, (orientado) ? 1 : ((valorado) ? item.getValor() : 1), v2, v1)
-						});	
-					});
-				});
-			}
-			
-			function gerarListaAdjacencia(){
-				listaAdjacencia = [];
-
-				listaVertices.forEach(val => {
-					let listaItemAdjacencia;
-
-					listaAdjacencia[val] = [];
-					listaItemAdjacencia = listaAdjacencia[val];
-				
-					listaAresta.forEach(item => {
-						if(item.getV1() == val)
-							if(orientado || !(item.getV2() in listaItemAdjacencia))
-								listaItemAdjacencia.push(item.getV2());
-						
-						if((!orientado || item.getOrientado == 1) && item.getV2() == val)
-							if(orientado || !(item.getV1() in listaItemAdjacencia))
-								listaItemAdjacencia.push(item.getV1());
-					});	
-				});
-			}
-
-			function gerarCabecalho(vertices, primeiroVazio = false){
-				let cabecalho = document.createElement('thead'),
-					tr = document.createElement('tr'),
-					th;
-
-				if(primeiroVazio) {
-					th = document.createElement('th');
-					th.scope = 'col';
-					th.innerHTML = '#';
-					tr.appendChild(th);
-				}	
-					
-				vertices.forEach(el => {
-					th = document.createElement('th');
-					th.scope = 'col';
-					th.innerHTML = el;
-					tr.appendChild(th);
-				});
-
-				cabecalho.className = 'thead-dark';
-				cabecalho.appendChild(tr);
-
-				return cabecalho;
-			}
-			
-			function insereMatriz(matriz, val, pos1, pos2){
-				if (pos1 in matriz)
-					if (pos2 in matriz[pos1])
-						matriz[pos1][pos2]+= val;
-					else {
-						matriz[pos1][pos2] = val;
-					}
-				else {
-					matriz[pos1] = [];
-					matriz[pos1][pos2] = val;
-				}
-			}
-
-			function listaArestaItem(ver1, ver2, valor, orientado){
-				var v1 = ver1, 
-						v2 = ver2,
-						val = valor,
-						ori = orientado;
-				
-				this.getV1 = function(){ return v1 };
-				this.setV1 = function(valor){ v1 = valor };
-				
-				this.getV2 = function(){ return v2 };
-				this.setV2 = function(valor){ v2 = valor };
-				
-				
-				this.getValor = function(){ return val };
-				this.setValor = function(valor){ val = valor };
-
-				this.getOrientado = function(){ return ori };
-				this.getOrientadoString = function(){ return (ori == 1) ? 'Sim' : 'Não' };
-				this.setOrientado = function(valor){ ori = valor };
-			}
-			
-			function limpaDiv(div){
-				while (div.firstChild)
-					div.removeChild(div.firstChild);	
-			}
-
-			window.onload = function() {
-				document.getElementById('btnEnviar').addEventListener('click', function(){
-					orientado = document.getElementById('checkOrientado').checked;
-					valorado = document.getElementById('checkValorado').checked;
-					listaAresta = [];
-					listaVertices = [];
-					listaAdjacencia = [];
-					matrizAdjacencia = [];
-					matrizIncidencia = [];
-					
-					gerarListaAresta();
-					gerarHtmlListaAresta();
-					gerarListaVertices();
-					gerarMatrizAdjacencia();
-					gerarHtmlMatrizAdjacencia();
-					gerarListaAdjacencia();
-					gerarHtmlListaAdjacencia();
-					gerarMatrizIncidencia();
-				});
-			}
-		</script>
-		<style>
-			.input {
-				margin: 10px;	
-			}
-
-			input, button, label {
-				margin: 5px;
-			}
-
-			.cell-dark {
-				color: #fff;
-				background-color: #212529;
-				border-color: #32383e;
-			}
-
-			.form-check-label {
-				width: 100px;
-			} 
-
-			.form-check {
-				line-height: 0.8;
-				padding-left: 25px;
-				margin-top: 5px;
-				margin-bottom: 10px;
-			}
-		</style> 
-	</head>
-	<body>
-		<div class="input">
-			<label for="inputDados">Dados</label>
-			<input type="text" id="inputDados" class="form-control" placeholder="Formato: 2,3/3,4/6,1" value="2,3/4,1">
-			<div class="form-check">
-				<input type="checkbox" class="form-check-input" id="checkValorado">
-				<label class="form-check-label" for="checkValorado">Valorado</label>
-				<input type="checkbox" class="form-check-input" id="checkOrientado">
-				<label class="form-check-label" for="checkOrientado">Orientado</label>
-			</div>
-			<button id="btnEnviar" class="btn btn-primary">Enviar</button>
+<body>
+	<div class="input">
+		<label for="inputDados">Dados</label>
+		<input type="text" id="inputDados" class="form-control" placeholder="Formato: 2,3/3,4/6,1" value="2,3/4,1/2,4/3,5/4,2/6,3/1,5">
+		<div class="form-check">
+			<input type="checkbox" class="form-check-input" id="checkValorado">
+			<label class="form-check-label" for="checkValorado">Valorado</label>
+			<input type="checkbox" class="form-check-input" id="checkOrientado">
+			<label class="form-check-label" for="checkOrientado">Orientado</label>
 		</div>
+		<button id="btnEnviar" class="btn btn-primary">Enviar</button>
+	</div>
 
-		<ul class="nav nav-tabs" id="myTab" role="tablist">
-			<li class="nav-item">
-				<a class="nav-link active" id="listaArestaTab" data-toggle="tab" href="#listaAresta" role="tab" aria-controls="listaAresta" aria-selected="true">Aresta</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" id="listaMatrizAdjacenciaTab" data-toggle="tab" href="#listaMatrizAdjacencia" role="tab" aria-controls="listaMatrizAdjacencia" aria-selected="false">Matriz Adjacência</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" id="listaAdjacenciaTab" data-toggle="tab" href="#listaAdjacencia" role="tab" aria-controls="listaAdjacencia" aria-selected="false">Lista Adjacência</a>
-			</li>
-			<li class="nav-item">
-				<a class="nav-link" id="listaIncidenciaTab" data-toggle="tab" href="#listaIncidencia" role="tab" aria-controls="listaIncidencia" aria-selected="false">Lista Incidência</a>
-			</li>
-		</ul>
-		<div class="tab-content" id="myTabContent">
-			<div class="tab-pane fade show active" id="listaAresta" role="tabpanel" aria-labelledby="lista-aresta"></div>
-			<div class="tab-pane fade" id="listaMatrizAdjacencia" role="tabpanel" aria-labelledby="lista-matriz-adjacencia"></div>
-			<div class="tab-pane fade" id="listaAdjacencia" role="tabpanel" aria-labelledby="lista-adjacencia-tab"></div>
-			<div class="tab-pane fade" id="listaIncidencia" role="tabpanel" aria-labelledby="lista-incidencia-tab"></div>
-		</div>
-	</body>
+	<ul class="nav nav-tabs" id="myTab" role="tablist">
+		<li class="nav-item">
+			<a class="nav-link active" id="listaArestaTab" data-toggle="tab" href="#listaAresta" role="tab" aria-controls="listaAresta"
+			 aria-selected="true">Aresta</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" id="listaMatrizAdjacenciaTab" data-toggle="tab" href="#listaMatrizAdjacencia" role="tab" aria-controls="listaMatrizAdjacencia"
+			 aria-selected="false">Matriz Adjacência</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" id="listaAdjacenciaTab" data-toggle="tab" href="#listaAdjacencia" role="tab" aria-controls="listaAdjacencia"
+			 aria-selected="false">Lista Adjacência</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" id="matrizIncidenciaTab" data-toggle="tab" href="#listaMatrizIncidencia" role="tab" aria-controls="listaIncidencia"
+			 aria-selected="false">Matriz Incidência</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link disabled" id="dijkstraTab" data-toggle="tab" href="#dijkstra" role="tab" aria-controls="listaIncidencia"
+			 aria-selected="false">Matriz Incidência</a>
+		</li>
+	</ul>
+	<div class="tab-content" id="myTabContent">
+		<div class="tab-pane fade show active" id="listaAresta" role="tabpanel" aria-labelledby="lista-aresta"></div>
+		<div class="tab-pane fade" id="listaMatrizAdjacencia" role="tabpanel" aria-labelledby="lista-matriz-adjacencia"></div>
+		<div class="tab-pane fade" id="listaAdjacencia" role="tabpanel" aria-labelledby="lista-adjacencia-tab"></div>
+		<div class="tab-pane fade" id="listaMatrizIncidencia" role="tabpanel" aria-labelledby="lista-incidencia-tab"></div>
+		<div class="tab-pane fade" id="dijkstra" role="tabpanel" aria-labelledby="lista-incidencia-tab"></div>
+	</div>
+</body>
+
+
+
 </html>
