@@ -192,6 +192,40 @@ function kruskal() {
   kruskalList = verticesResultado;
 }
 
+function prim() {
+  var vertices = [],
+    listaFinal = [],
+    vertice, verticeAtual,
+    arestas,
+    index, indexAtual;
+
+  for (let i = 0; i < listaVertices.length; i++) {
+    vertices.push([listaVertices[i], true, (i != 0) ? Infinity : 0]);
+    listaFinal.push(null);
+  }
+
+  while (faltaVerificar(vertices)) {
+    verticeAtual = menorVertice(vertices);
+    indexAtual = listaVertices.indexOf(verticeAtual);
+    vertices[indexAtual][1] = false;
+    arestas = listarArestasPorVertice(vertices[indexAtual][0]);
+
+    arestas.forEach(aresta => {
+      if (aresta.getV1() != aresta.getV2()) {
+        vertice = (aresta.getV1() != verticeAtual) ? aresta.getV1() : aresta.getV2();
+        index = encontraIndex(vertice, vertices);   
+
+        if (vertices[index][1] && vertices[index][2] > aresta.getValor()) {
+          vertices[index][2] = aresta.getValor();
+          listaFinal[index] = aresta;  
+        }
+      }
+    });
+  }
+
+  primList = listaFinal;
+}
+
 function verticeMenorDistancia(distancia, vertices) {
   var valMenor = Infinity,
     menor;
@@ -222,6 +256,10 @@ function arestaMenorValor(arestas) {
   return arestaMenor;
 }
 
+function listarArestasPorVertice(vertice) {
+  return listaAresta.filter(a => a.getV1() == vertice || a.getV2() == vertice);
+}
+
 function faltaVerificar(vertices) {
   var achou = false;
 
@@ -230,6 +268,25 @@ function faltaVerificar(vertices) {
       return true;
 
   return achou;
+}
+
+function encontraIndex(vertice, lista) {
+  for (let i = 0; i < lista.length; i++) 
+    if (lista[i][0] == vertice) 
+      return i;
+}
+
+function menorVertice(lista){
+  let menor = Infinity,
+    vertice = lista[0][0];
+
+  for (let i = 0; i < lista.length; i++)
+    if (lista[i][1] && lista[i][2] < menor) {
+      menor = lista[i][2];
+      vertice = lista[i][0];
+    }
+  
+    return vertice;
 }
 
 window.onload = function () {
@@ -243,6 +300,7 @@ window.onload = function () {
     matrizIncidencia = [];
     dijkstraList = [];
     kruskalList = [];
+    primList = [];
 
     gerarListaAresta();
     gerarListaVertices();
@@ -251,12 +309,14 @@ window.onload = function () {
     gerarMatrizIncidencia();
 
     kruskal();
+    prim();
 
     gerarHtmlListaAresta();
     gerarHtmlMatrizAdjacencia();
     gerarHtmlListaAdjacencia();
     gerarHtmlMatrizIncidencia();
     gerarHtmlKruskal();
+    gerarHtmlPrim();
 
     document.getElementById("dijkstraTab").classList.remove("disabled");
   });
@@ -309,4 +369,4 @@ window.onload = function () {
       }
     });
   }
-} */
+ */
