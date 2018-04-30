@@ -188,6 +188,43 @@ function gerarHtmlDijkstra() {
   listaMatrizIncidencia.appendChild(tabela);
 }
 
+function gerarHtmlKruskal() {
+  let tabela = document.createElement('table'),
+    cabecalho,
+    listaCabecalho = ['Vertice 1', 'Vertice 2', 'Valor'],
+    lista = document.getElementById('kruskal'),
+    bodyTabela = document.createElement('tbody');
+
+  limpaDiv(lista);
+
+  cabecalho = gerarCabecalho(listaCabecalho);
+
+  kruskalList.forEach(item => {
+    let tr = document.createElement('tr'),
+      td = null;
+
+    td = document.createElement('td');
+    td.innerHTML = item.getV1();
+    tr.appendChild(td);
+
+    td = document.createElement('td');
+    td.innerHTML = item.getV2();
+    tr.appendChild(td);
+
+    td = document.createElement('td');
+    td.innerHTML = item.getValor();
+    tr.appendChild(td);
+
+    bodyTabela.appendChild(tr);
+  });
+
+  tabela.id = 'tableKruskal';
+  tabela.classList = 'table table-striped';
+  tabela.appendChild(cabecalho);
+  tabela.appendChild(bodyTabela);
+  lista.appendChild(tabela);
+}
+
 function gerarCabecalho(vertices, primeiroVazio = false) {
   let cabecalho = document.createElement('thead'),
     tr = document.createElement('tr'),

@@ -46,9 +46,9 @@ function gerarMatrizIncidencia() {
 
       if (orientado) {
         if (el.getV1() == vertice) {
-          matrizIncidencia[vertice][i] = (!(el.getOrientado() == 1) && orientado) ? 1 : ((valorado) ? el.getValor() : 1);
+          matrizIncidencia[vertice][i] = ((valorado) ? el.getValor() : 1);
         } else if (el.getV2() == vertice) {
-          matrizIncidencia[vertice][i] = (!(el.getOrientado() == 1) && orientado) ? 1 : ((valorado) ? el.getValor() : 1) * -1;
+          matrizIncidencia[vertice][i] = ((valorado) ? el.getValor() : 1) * -1;
         }
       } else if (el.getV1() == vertice || el.getV2() == vertice)
         matrizIncidencia[vertice][i] = ((valorado) ? el.getValor() : 1);
@@ -58,7 +58,7 @@ function gerarMatrizIncidencia() {
 
 function gerarMatrizAdjacencia() {
   matrizAdjacencia = [];
-  debugger;
+
   listaVertices.forEach(v1 => {
     listaVertices.forEach(v2 => {
       listaAresta.forEach(item => {
@@ -69,7 +69,7 @@ function gerarMatrizAdjacencia() {
 
         insereMatriz(matrizAdjacencia, val, v1, v2);
 
-        if (item.getOrientado() != 1 && v1 != v2)
+        if (v1 != v2)
           insereMatriz(matrizAdjacencia, val, v2, v1);
       });
     });
@@ -90,7 +90,7 @@ function gerarListaAdjacencia() {
         if (orientado || !(item.getV2() in listaItemAdjacencia))
           listaItemAdjacencia.push(item.getV2());
 
-      if (item.getOrientado() == 0 && item.getV2() == val)
+      if (!orientado && item.getV2() == val)
         if (orientado || !(item.getV1() in listaItemAdjacencia))
           listaItemAdjacencia.push(item.getV1());
     });
@@ -109,11 +109,10 @@ function insereMatriz(matriz, val, pos1, pos2) {
   }
 }
 
-function listaArestaItem(ver1, ver2, valor, orientado) {
+function listaArestaItem(ver1, ver2, valor) {
   var v1 = ver1,
     v2 = ver2,
-    val = valor,
-    ori = orientado;
+    val = valor;
 
   this.getV1 = function () { return v1 };
   this.setV1 = function (valor) { v1 = valor };
@@ -124,10 +123,6 @@ function listaArestaItem(ver1, ver2, valor, orientado) {
 
   this.getValor = function () { return val };
   this.setValor = function (valor) { val = valor };
-
-  this.getOrientado = function () { return ori };
-  this.getOrientadoString = function () { return (ori == 1) ? 'Sim' : 'Não' };
-  this.setOrientado = function (valor) { ori = valor };
 }
 
 function limpaDiv(div) {
@@ -158,11 +153,11 @@ function dijkstra(inicio) {
 
     adjacentes.forEach(adjacente => {
       index = listaVertices.indexOf(adjacente);
-      arestas = listaAresta.filter(la => la.getV1() == adjacente || (la.getV2() == adjacente && (!orientado || (orientado && la.getOrientado() != 1))));
+      arestas = listaAresta.filter(la => la.getV1() == adjacente || (la.getV2() == adjacente && !orientado));
       arestaMenor = arestaMenorValor(arestas);
 
       let dist = ((valorado) ? arestaMenor.getValor() : 1) + distancia[indexAtual];
-      debugger
+      
       if (distancia[index] > dist) {
         distancia[index] = dist;
         caminho[index] = (arestaMenor.getV1() == adjacente) ? arestaMenor.getV2() : arestaMenor.getV1();
@@ -177,41 +172,25 @@ function dijkstra(inicio) {
   });
 }
 
-/* function dijkstra(inicio) {
-  var vertices = [],
-    distancia = [],
-    caminho = [],
-    adjacentes,
-    vertice,
-    arestas,
-    index, indexAtual, arestaMenor;
+function kruskal() {
+  var verticesResultado = [],
+    verticesExistentes = [];
 
-  for (let i = 0; i < listaVertices.length; i++) {
-    vertices.push([listaVertices[i], true]);
-    distancia.push((inicio != listaVertices[i]) ? Infinity : 0);
-    caminho.push(null);
-  }
+  listaAresta.sort((a, b) => a.getValor() - b.getValor());
 
-  while (faltaVerificar(vertices)) {
-    vertice = verticeMenorDistancia(distancia, vertices);
-    indexAtual = listaVertices.indexOf(vertice);
-    vertices[indexAtual][1] = false;
-    adjacentes = listaAdjacencia[vertice];
+  listaAresta.forEach(v => {
+    let v1 = verticesExistentes.indexOf(v.getV1()), v2 = verticesExistentes.indexOf(v.getV2());
 
-    adjacentes.forEach(adjacente => {
-      index = listaVertices.indexOf(adjacente);
-      arestas = listaAresta.filter(la => la.getV1() == adjacente || (la.getV2() == adjacente && (!orientado || (orientado && la.getOrientado() != 1))));
-      arestaMenor = arestaMenorValor(arestas);
+    if (v1 < 0 || v2 < 0) {
+      verticesResultado.push(v);
 
-      let dist = ((valorado) ? arestaMenor.getValor() : 1) + distancia[indexAtual];
+      if (v1 < 0) verticesExistentes.push(v.getV1());
+      if (v2 < 0) verticesExistentes.push(v.getV2());
+    }
+  });
 
-      if (distancia[index] > dist) {
-        distancia[index] = dist;
-        caminho = vertice;
-      }
-    });
-  }
-} */
+  kruskalList = verticesResultado;
+}
 
 function verticeMenorDistancia(distancia, vertices) {
   var valMenor = Infinity,
@@ -263,6 +242,7 @@ window.onload = function () {
     matrizAdjacencia = [];
     matrizIncidencia = [];
     dijkstraList = [];
+    kruskalList = [];
 
     gerarListaAresta();
     gerarListaVertices();
@@ -270,10 +250,13 @@ window.onload = function () {
     gerarMatrizAdjacencia();
     gerarMatrizIncidencia();
 
+    kruskal();
+
     gerarHtmlListaAresta();
     gerarHtmlMatrizAdjacencia();
     gerarHtmlListaAdjacencia();
     gerarHtmlMatrizIncidencia();
+    gerarHtmlKruskal();
 
     document.getElementById("dijkstraTab").classList.remove("disabled");
   });
@@ -281,13 +264,49 @@ window.onload = function () {
   document.getElementById('btnDijkstra').addEventListener('click', function () {
     let val = document.getElementById('inputDijkstra').value,
        n = Math.floor(Number(val));
-    
+
     if(n !== Infinity && String(n) === val && n >= 0) {
       dijkstra(n);
       gerarHtmlDijkstra();
     } else {
       alert('Insira um valor válido');
     }
-    
   });
 }
+
+
+/* function dijkstra(inicio) {
+  var vertices = [],
+    distancia = [],
+    caminho = [],
+    adjacentes,
+    vertice,
+    arestas,
+    index, indexAtual, arestaMenor;
+
+  for (let i = 0; i < listaVertices.length; i++) {
+    vertices.push([listaVertices[i], true]);
+    distancia.push((inicio != listaVertices[i]) ? Infinity : 0);
+    caminho.push(null);
+  }
+
+  while (faltaVerificar(vertices)) {
+    vertice = verticeMenorDistancia(distancia, vertices);
+    indexAtual = listaVertices.indexOf(vertice);
+    vertices[indexAtual][1] = false;
+    adjacentes = listaAdjacencia[vertice];
+
+    adjacentes.forEach(adjacente => {
+      index = listaVertices.indexOf(adjacente);
+      arestas = listaAresta.filter(la => la.getV1() == adjacente || (la.getV2() == adjacente && (!orientado || (orientado && la.getOrientado() != 1))));
+      arestaMenor = arestaMenorValor(arestas);
+
+      let dist = ((valorado) ? arestaMenor.getValor() : 1) + distancia[indexAtual];
+
+      if (distancia[index] > dist) {
+        distancia[index] = dist;
+        caminho = vertice;
+      }
+    });
+  }
+} */
